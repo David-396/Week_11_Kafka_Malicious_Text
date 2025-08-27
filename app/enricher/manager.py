@@ -3,12 +3,14 @@ from app.kafka_config import get_consumer, get_producer_config
 
 
 class EnricherManager:
-    def __init__(self, weapon_list_file_path:str, topic_mapping:dict, topics_list:list):
+    def __init__(self, weapon_list_file_path:str, topic_mapping:dict, topics_list:list, group_id:str):
         self.producer = get_producer_config()
         self.enricher = Enricher(weapon_list_file_path=weapon_list_file_path)
 
         self.topic_mapping = topic_mapping
         self.topics_list = topics_list
+
+        self.consumer = get_consumer(topics=self.topics_list, group_id=group_id)
 
     def enrich_processors(self, doc:dict):
         original_text = doc['original_text']
@@ -18,11 +20,10 @@ class EnricherManager:
         doc['weapons_detected'] = self.enricher.find_weapons(clean_text)
         doc['relevant_timestamp'] = self.enricher.earliest_timestamp(original_text)
 
-    def consume_process_produce(self, group_id:str):
+    def consume_process_produce(self):
         try:
-            consumer = get_consumer(topics=self.topics_list, group_id=group_id)
 
-            for message in consumer:
+            for message in self.consumer:
 
                 source_topic = message.topic
                 target_topic = self.topic_mapping[source_topic]
