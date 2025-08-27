@@ -7,20 +7,10 @@ class PreProcessorManager:
         self.producer = get_producer_config()
         self.processor = Processor()
 
-
-    def run(self):
-        self.consume_process_produce(consume_topic='raw_tweets_antisemitic',
-                                     produce_topic='preprocessed_tweets_antisemitic')
-
-        self.consume_process_produce(consume_topic='raw_tweets_not_antisemitic',
-                                     produce_topic='preprocessed_tweets_not_antisemitic')
-
-        self.producer.flush()
-
-    def consume_process_produce(self, consume_topic:str, produce_topic:str):
+    def consume_process_produce(self, consume_topic:str, produce_topic:str, group_id:str):
         try:
             msgs = get_consumer(topic=consume_topic,
-                                group_id='group-1')
+                                group_id=group_id)
 
             for message in msgs:
 
@@ -28,6 +18,8 @@ class PreProcessorManager:
                 clean_doc = {'original_msg': message.value, 'clean_msg': clean_msg}
 
                 self.producer.send(topic=produce_topic, value=clean_doc)
+
+            self.producer.flush()
 
         except Exception as e:
             print(f'------------ {e} ------------')
