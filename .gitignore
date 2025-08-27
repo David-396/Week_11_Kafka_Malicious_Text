@@ -1,1 +1,80 @@
-.venv
+# -----------------------
+# Virtual environments
+# -----------------------
+.venv/
+venv/
+ENV/
+env/
+
+# -----------------------
+# Python cache and compiled files
+# -----------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -----------------------
+# Python packaging
+# -----------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -----------------------
+# Logs and coverage
+# -----------------------
+*.log
+*.coverage
+coverage.xml
+.cache/
+
+# -----------------------
+# IDEs
+# -----------------------
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# -----------------------
+# OS files
+# -----------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------
+# Test files
+# -----------------------
+test.py
+tests/
+*.test.py
+
+# -----------------------
+# Secrets and environment variables
+# -----------------------
+.env
+.env.*
+
+# -----------------------
+# Docker
+# -----------------------
+docker-compose.override.yml
+*.pid
+*.sqlite3
+
+# -----------------------
+# Misc
+# -----------------------
+*.so
+*.exe
+*.dll
+*.o
+*.a
+*.out
+
+# -----------------------
+# Include important docs
+# -----------------------
+!README.md
+!README.txt
