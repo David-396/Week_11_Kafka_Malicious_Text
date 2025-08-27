@@ -1,6 +1,6 @@
 import logging
 from motor.motor_asyncio import AsyncIOMotorClient
-from app.data_retrieval.config import MDB_URI,DB_NAME,COLLECTION_NAME
+from config import MDB_URI,DB_NAME,COLLECTION_NAME
 
 logger = logging.getLogger(__name__)
 
