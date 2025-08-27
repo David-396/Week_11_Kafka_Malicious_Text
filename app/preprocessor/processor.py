@@ -36,17 +36,12 @@ class Processor:
         return lemmatized
 
     # clean the text manager
-    def clean_text_manager(self, doc:dict):
-        clean_doc = {}
+    def clean_text_manager(self, txt:str):
 
-        for k,v in doc.items():
+        clean_txt = self.rm_punctuation_marks(txt).lower().strip()
+        clean_txt = self.rm_stop_words(clean_txt)
+        clean_txt = self.lemmatize_words(clean_txt)
 
-            if type(v) == str:
+        clean_txt = ' '.join(clean_txt)
 
-                v = self.rm_punctuation_marks(v).lower().strip()
-                v = self.rm_stop_words(v)
-                v = self.lemmatize_words(v)
-
-                clean_doc[k] = ' '.join(v)
-
-        return clean_doc
+        return clean_txt

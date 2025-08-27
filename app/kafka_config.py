@@ -13,10 +13,12 @@ def get_producer_config():
                              )
 
 
-def get_consumer(topic:str, group_id:str):
+def get_consumer(topics:list, group_id:str):
     bootstrap_servers = [f'{KAFKA_HOST_NAME}:{KAFKA_PORT}']
-    return KafkaConsumer(topic,
-                                 group_id=group_id,
-                                 value_deserializer=lambda m: json.loads(m.decode('ascii')),
-                                 bootstrap_servers=bootstrap_servers,
-                                 consumer_timeout_ms=10000)
+
+    consumer = KafkaConsumer(group_id=group_id,
+                         value_deserializer=lambda m: json.loads(m.decode('ascii')),
+                         bootstrap_servers=bootstrap_servers,
+                         consumer_timeout_ms=10000)
+
+    return consumer.subscribe(topics=topics)
