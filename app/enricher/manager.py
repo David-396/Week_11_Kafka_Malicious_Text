@@ -30,7 +30,12 @@ class EnricherManager:
         try:
             consumer = get_consumer(group_id=self.group_id)
             consumer.subscribe(self.topics_list)
-            msgs = consumer.poll(10000)
+            msgs = consumer.poll(15000)
+
+            if not msgs:
+                return
+
+            processed_count = 0
 
             for tp, ConsumerRecord in msgs.items():
 
@@ -41,12 +46,29 @@ class EnricherManager:
 
                     doc = record.value
                     self.enrich_processors(doc)
-                    print(doc)
-                    self.producer.send(topic=target_topic, value=doc)
 
-                    logging.info(f'sending : {doc}')
+                    future = self.producer.send(topic=target_topic, value=doc)
 
-            self.producer.flush()
+                    try:
+
+                        future.get(timeout=10)
+                        processed_count += 1
+                        logging.info(f'Successfully sent: {doc}')
+
+                    except Exception as send_error:
+                        logging.error(f'Failed to send message: {send_error}')
+                        raise
+
+                if processed_count > 0:
+                    self.producer.flush()
+                    consumer.commit()
+                    logging.info(f'Successfully processed and committed {processed_count} messages')
 
         except Exception as e:
-            print(f'------------ {e} ------------')
+            logging.error(f'Error in consume_process_produce: {e}')
+
+            raise
+
+        finally:
+            if consumer:
+                consumer.close()
