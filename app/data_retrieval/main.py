@@ -27,7 +27,11 @@ def get_antisemietic_tweets():
 
     except Exception as e:
         print(e)
+
         return e
+
+    finally:
+        client.close()
 
 
 @app.get('/not-anti')

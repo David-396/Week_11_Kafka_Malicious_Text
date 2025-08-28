@@ -1,7 +1,6 @@
 import logging
-
 from enrich import Enricher
-from app.kafka_config import get_consumer, get_producer_config
+from kafka_config import get_consumer, get_producer_config
 
 logging.basicConfig(level=logging.INFO)
 
@@ -42,7 +41,7 @@ class EnricherManager:
 
                     doc = record.value
                     self.enrich_processors(doc)
-
+                    print(doc)
                     self.producer.send(topic=target_topic, value=doc)
 
                     logging.info(f'sending : {doc}')

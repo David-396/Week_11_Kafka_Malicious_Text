@@ -1,7 +1,6 @@
 import logging
-
 from processor import Processor
-from app.kafka_config import get_consumer, get_producer_config
+from kafka_config import get_consumer, get_producer_config
 
 logging.basicConfig(level=logging.INFO)
 

@@ -1,5 +1,4 @@
 import re
-
 from lemmatization import Lemmatizer
 import nltk
 from nltk.corpus import stopwords
