@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: david-eini12-dev
+  name: data-retrieval
+spec:
+  selector:
+    matchLabels:
+      app: data-retrieval
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: data-retrieval
+    spec:
+      containers:
+        - name: data-retrieval
+          image: #########################################################
+          env:
+          - name: MONGO_HOST
+            valueFrom:
+              secretKeyRef:
+                name: data-retrieval-secret
+                key: MONGO_HOST
+          - name: MONGO_PORT
+            valueFrom:
+              secretKeyRef:
+                name: data-retrieval-secret
+                key: MONGO_PORT
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: data-retrieval-secret
+                key: DB_NAME
+          - name: ANTISEMITE_COLLECTION_NAME
+            valueFrom:
+              secretKeyRef:
+                name: data-retrieval-secret
+                key: ANTISEMITE_COLLECTION_NAME
+          - name: NOT_ANTISEMITE_COLLECTION_NAME
+            valueFrom:
+              secretKeyRef:
+                name: data-retrieval-secret
+                key: NOT_ANTISEMITE_COLLECTION_NAME
+
+          ports:
+            - containerPort: 8080
+              protocol: TCP
