@@ -1,5 +1,5 @@
+import re
 from time import strftime
-
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 class Enricher:

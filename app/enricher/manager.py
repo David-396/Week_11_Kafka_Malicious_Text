@@ -1,4 +1,4 @@
-from app.enricher.enrich import Enricher
+from enrich import Enricher
 from app.kafka_config import get_consumer, get_producer_config
 
 
