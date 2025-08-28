@@ -30,15 +30,17 @@ class EnricherManager:
             consumer.subscribe(self.topics_list)
             msgs = consumer.poll(10000)
 
-            for message in msgs:
+            for tp, ConsumerRecord in msgs.items():
 
-                source_topic = message.topic
-                target_topic = self.topic_mapping[source_topic]
+                for record in ConsumerRecord:
 
-                doc = message.value
-                self.enrich_processors(doc)
+                    source_topic = record.topic
+                    target_topic = self.topic_mapping[source_topic]
 
-                self.producer.send(topic=target_topic, value=doc)
+                    doc = record.value
+                    self.enrich_processors(doc)
+
+                    self.producer.send(topic=target_topic, value=doc)
 
             self.producer.flush()
 

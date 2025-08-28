@@ -17,20 +17,23 @@ class PreProcessorManager:
 
             consumer = get_consumer(group_id=self.group_id)
             consumer.subscribe(self.consume_topics)
+
             msgs = consumer.poll(10000)
 
-            for message in msgs:
+            for tp, ConsumerRecord in msgs.items():
 
-                source_topic = message.topic
-                target_topic = self.topic_mapping[source_topic]
+                for record in ConsumerRecord:
 
-                doc = message.value
-                doc['original_text'] = text = doc.pop(self.text_key)
+                    source_topic = record.topic
+                    target_topic = self.topic_mapping[source_topic]
 
-                clean_msg = self.processor.clean_text_manager(text)
-                doc['clean_text'] = clean_msg
+                    doc = record.value
+                    doc['original_text'] = text = doc.pop(self.text_key)
 
-                self.producer.send(topic=target_topic, value=doc)
+                    clean_msg = self.processor.clean_text_manager(text)
+                    doc['clean_text'] = clean_msg
+
+                    self.producer.send(topic=target_topic, value=doc)
 
             self.producer.flush()
 
