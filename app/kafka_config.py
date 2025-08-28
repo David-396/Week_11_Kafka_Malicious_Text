@@ -2,7 +2,7 @@ import json
 import os
 from kafka import KafkaProducer, KafkaConsumer
 
-KAFKA_HOST_NAME = os.environ.get('KAFKA_HOST_NAME', 'localhost')
+KAFKA_HOST_NAME = os.environ.get('KAFKA_HOST_NAME', 'kafka')
 KAFKA_PORT = os.environ.get('KAFKA_PORT', '9092')
 
 

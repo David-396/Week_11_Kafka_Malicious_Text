@@ -1,3 +1,5 @@
+import re
+
 from lemmatization import Lemmatizer
 import nltk
 from nltk.corpus import stopwords
@@ -13,10 +15,8 @@ class Processor:
     # remove punctuation marks
     @staticmethod
     def rm_punctuation_marks(txt:str):
-        punctuation_marks = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',
-                             ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
 
-        no_punctuation = ''.join([ltr for ltr in txt if ltr not in punctuation_marks])
+        no_punctuation = re.sub('[^A-Za-z0-9 ]+', '', txt)
 
         return no_punctuation
 
