@@ -38,5 +38,17 @@ class Enricher:
         return [weapon for weapon in txt if weapon in self.weapons_black_list]
 
     # find the earliest timestamp from text
-    def earliest_timestamp(self, txt:str):
-        pass
+    @staticmethod
+    def earliest_timestamp(txt:str):
+        pattern = r"\d{2}-\d{2}-\d{4}"
+        matches = re.findall(pattern, txt)
+
+        if matches:
+
+            if len(matches) == 1:
+                return matches[0]
+
+            else:
+                return max(matches)
+
+        return None

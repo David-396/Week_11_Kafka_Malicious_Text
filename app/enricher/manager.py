@@ -19,7 +19,10 @@ class EnricherManager:
 
         doc['sentiment'] = self.enricher.find_txt_sentiment(clean_text)
         doc['weapons_detected'] = self.enricher.find_weapons(clean_text)
-        doc['relevant_timestamp'] = self.enricher.earliest_timestamp(original_text)
+        relevant_time = self.enricher.earliest_timestamp(original_text)
+
+        if relevant_time:
+            doc['relevant_timestamp'] = relevant_time
 
     def consume_process_produce(self):
         try:
