@@ -46,6 +46,7 @@ Thumbs.db
 # -----------------------
 # Test files
 # -----------------------
+test12.py
 test.py
 tests/
 *.test.py
