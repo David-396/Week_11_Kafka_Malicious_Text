@@ -9,8 +9,9 @@ class EnricherManager:
 
         self.topic_mapping = topic_mapping
         self.topics_list = topics_list
+        self.group_id = group_id
 
-        self.consumer = get_consumer(topics=self.topics_list, group_id=group_id)
+
 
     def enrich_processors(self, doc:dict):
         original_text = doc['original_text']
@@ -22,8 +23,11 @@ class EnricherManager:
 
     def consume_process_produce(self):
         try:
+            consumer = get_consumer(group_id=self.group_id)
+            consumer.subscribe(self.topics_list)
+            msgs = consumer.poll(10000)
 
-            for message in self.consumer:
+            for message in msgs:
 
                 source_topic = message.topic
                 target_topic = self.topic_mapping[source_topic]
