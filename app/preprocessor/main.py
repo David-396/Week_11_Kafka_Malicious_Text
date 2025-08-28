@@ -1,5 +1,5 @@
 import time
-from app.preprocessor.manager import PreProcessorManager
+from manager import PreProcessorManager
 
 if __name__ == '__main__':
 

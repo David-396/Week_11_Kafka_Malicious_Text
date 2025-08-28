@@ -1,0 +1,11 @@
+FROM python:3.12-slim
+
+COPY requirements.txt .
+
+COPY ../kafka_config.py .
+
+RUN pip install --upgrade pip --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "main.py"]

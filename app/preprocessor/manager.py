@@ -1,4 +1,4 @@
-from app.preprocessor.processor import Processor
+from processor import Processor
 from app.kafka_config import get_consumer, get_producer_config
 
 
