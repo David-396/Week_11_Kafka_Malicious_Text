@@ -35,7 +35,9 @@ class Enricher:
     # find the weapons in a text
     def find_weapons(self, txt:str):
         txt = txt.split(' ')
-        return [weapon for weapon in txt if weapon in self.weapons_black_list]
+        weapons_lst = [weapon for weapon in txt if weapon in self.weapons_black_list]
+
+        return weapons_lst if weapons_lst else None
 
     # find the earliest timestamp from text
     @staticmethod
