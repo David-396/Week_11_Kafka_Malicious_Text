@@ -19,6 +19,12 @@ class PreProcessorManager:
             consumer.subscribe(self.consume_topics)
             msgs = consumer.poll(10000)
 
+            consumer = get_consumer(group_id=self.group_id)
+            consumer.subscribe(self.consume_topics)
+            msgs = consumer.poll(timeout_ms=10000)  # msgs יהיה dict {TopicPartition: [messages]}
+
+            msgs = consumer.poll(timeout_ms=10000)  # dict {TopicPartition: [ConsumerRecord]}
+
             for message in msgs:
 
                 source_topic = message.topic
