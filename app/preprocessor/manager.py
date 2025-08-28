@@ -1,6 +1,9 @@
+import logging
+
 from processor import Processor
 from app.kafka_config import get_consumer, get_producer_config
 
+logging.basicConfig(level=logging.INFO)
 
 class PreProcessorManager:
     def __init__(self, text_key:str, topic_mapping:dict, consume_topics:list, group_id:str):
@@ -34,6 +37,8 @@ class PreProcessorManager:
                     doc['clean_text'] = clean_msg
 
                     self.producer.send(topic=target_topic, value=doc)
+
+                    logging.info(f'sending : {doc}')
 
             self.producer.flush()
 

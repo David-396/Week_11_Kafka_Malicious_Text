@@ -1,6 +1,9 @@
+import logging
+
 from enrich import Enricher
 from app.kafka_config import get_consumer, get_producer_config
 
+logging.basicConfig(level=logging.INFO)
 
 class EnricherManager:
     def __init__(self, weapon_list_file_path:str, topic_mapping:dict, topics_list:list, group_id:str):
@@ -41,6 +44,8 @@ class EnricherManager:
                     self.enrich_processors(doc)
 
                     self.producer.send(topic=target_topic, value=doc)
+
+                    logging.info(f'sending : {doc}')
 
             self.producer.flush()
 
