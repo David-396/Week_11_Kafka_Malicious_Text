@@ -1,0 +1,9 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: data-retrieval-route
+  namespace: david-eini12-dev
+spec:
+  to:
+    kind: Service
+    name: data-retrieval-svc

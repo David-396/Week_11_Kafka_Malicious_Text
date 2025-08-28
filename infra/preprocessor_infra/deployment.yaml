@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: david-eini12-dev
+  name: preprocessor
+spec:
+  selector:
+    matchLabels:
+      app: preprocessor
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: preprocessor
+    spec:
+      containers:
+        - name: preprocessor
+          image: #########################################################
+          env:
+          - name: KAFKA_HOST_NAME
+            valueFrom:
+              secretKeyRef:
+                name: preprocessor-secret
+                key: KAFKA_HOST_NAME
+          - name: KAFKA_PORT
+            valueFrom:
+              secretKeyRef:
+                name: preprocessor-secret
+                key: KAFKA_PORT
+          - name: TEXT_KEY
+            valueFrom:
+              secretKeyRef:
+                name: preprocessor-secret
+                key: TEXT_KEY
+          - name: GROUP_ID
+            valueFrom:
+              secretKeyRef:
+                name: preprocessor-secret
+                key: GROUP_ID
+          ports:
+            - containerPort: 8080
+              protocol: TCP

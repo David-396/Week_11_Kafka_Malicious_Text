@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: preprocessor-svc
+  namespace: david-eini12-dev
+spec:
+  selector:
+    app: preprocessor
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
