@@ -30,39 +30,36 @@ class EnricherManager:
         try:
             consumer = get_consumer(group_id=self.group_id)
             consumer.subscribe(self.topics_list)
-            msgs = consumer.poll(15000)
 
-            if not msgs:
+            if not consumer:
                 return
 
             processed_count = 0
 
-            for tp, ConsumerRecord in msgs.items():
+            for message in consumer:
 
-                for record in ConsumerRecord:
+                source_topic = message.topic
+                target_topic = self.topic_mapping[source_topic]
 
-                    source_topic = record.topic
-                    target_topic = self.topic_mapping[source_topic]
+                doc = message.value
+                self.enrich_processors(doc)
 
-                    doc = record.value
-                    self.enrich_processors(doc)
+                future = self.producer.send(topic=target_topic, value=doc)
 
-                    future = self.producer.send(topic=target_topic, value=doc)
+                try:
 
-                    try:
+                    future.get(timeout=10)
+                    processed_count += 1
+                    logging.info(f'Successfully sent: {doc}')
 
-                        future.get(timeout=10)
-                        processed_count += 1
-                        logging.info(f'Successfully sent: {doc}')
+                except Exception as send_error:
+                    logging.error(f'Failed to send message: {send_error}')
+                    raise
 
-                    except Exception as send_error:
-                        logging.error(f'Failed to send message: {send_error}')
-                        raise
-
-                if processed_count > 0:
-                    self.producer.flush()
-                    consumer.commit()
-                    logging.info(f'Successfully processed and committed {processed_count} messages')
+            if processed_count > 0:
+                self.producer.flush()
+                consumer.commit()
+                logging.info(f'Successfully processed and committed {processed_count} messages')
 
         except Exception as e:
             logging.error(f'Error in consume_process_produce: {e}')

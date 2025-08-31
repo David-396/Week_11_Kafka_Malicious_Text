@@ -21,6 +21,7 @@ def get_consumer(group_id:str):
         group_id=group_id,
         value_deserializer=lambda m: json.loads(m.decode('ascii')),
         bootstrap_servers=bootstrap_servers,
-        )
+        auto_offset_reset="earliest"
+    )
 
     return consumer
