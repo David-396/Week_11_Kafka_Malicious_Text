@@ -14,14 +14,12 @@ if __name__ == '__main__':
 
     enricher = EnricherManager(weapon_list_file_path=WEAPON_LIST_FILE_PATH, topic_mapping=topic_mapping, topics_list=topics_list, group_id=GROUP_ID)
 
-    while True:
-        try:
+    try:
 
-            enricher.consume_process_produce()
+        enricher.consume_process_produce()
 
-            time.sleep(0.5)
+    except Exception as e:
+        print(f'------------ {e} ------------')
 
-        except Exception as e:
-            print(f'------------ {e} ------------')
-
-            enricher.producer.close()
+        enricher.producer.close()
+        enricher.consumer.close()

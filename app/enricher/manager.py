@@ -13,6 +13,9 @@ class EnricherManager:
         self.topics_list = topics_list
         self.group_id = group_id
 
+        self.consumer = get_consumer(group_id=self.group_id)
+        self.consumer.subscribe(self.topics_list)
+
 
 
     def enrich_processors(self, doc:dict):
@@ -27,45 +30,29 @@ class EnricherManager:
             doc['relevant_timestamp'] = relevant_time
 
     def consume_process_produce(self):
-        try:
-            consumer = get_consumer(group_id=self.group_id)
-            consumer.subscribe(self.topics_list)
 
-            if not consumer:
-                return
+        if not self.consumer:
+            return
 
-            processed_count = 0
+        processed_count = 0
 
-            for message in consumer:
-
+        for message in self.consumer:
+            try:
                 source_topic = message.topic
                 target_topic = self.topic_mapping[source_topic]
 
                 doc = message.value
                 self.enrich_processors(doc)
 
-                future = self.producer.send(topic=target_topic, value=doc)
+                self.producer.send(topic=target_topic, value=doc)
 
-                try:
+                processed_count += 1
+                logging.info(f'Successfully sent: {doc}')
 
-                    future.get(timeout=10)
-                    processed_count += 1
-                    logging.info(f'Successfully sent: {doc}')
+            except Exception as e:
+                logging.error(f'Failed to process message: {e}')
 
-                except Exception as send_error:
-                    logging.error(f'Failed to send message: {send_error}')
-                    raise
-
-            if processed_count > 0:
-                self.producer.flush()
-                consumer.commit()
-                logging.info(f'Successfully processed and committed {processed_count} messages')
-
-        except Exception as e:
-            logging.error(f'Error in consume_process_produce: {e}')
-
-            raise
-
-        finally:
-            if consumer:
-                consumer.close()
+        if processed_count > 0:
+            self.producer.flush()
+            self.consumer.commit()
+            logging.info(f'Successfully processed and committed {processed_count} messages')

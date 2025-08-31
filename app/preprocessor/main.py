@@ -14,14 +14,11 @@ if __name__ == '__main__':
 
     manager = PreProcessorManager(text_key=TEXT_KEY, topic_mapping=topic_mapping, consume_topics=consume_topics, group_id=GROUP_ID)
 
-    while True:
-        try:
+    try:
 
-            manager.consume_process_produce()
+        manager.consume_process_produce()
 
-            time.sleep(0.5)
+    except Exception as e:
+        print(f'------------ {e} ------------')
 
-        except Exception as e:
-            print(f'------------ {e} ------------')
-
-            manager.producer.close()
+        manager.producer.close()
