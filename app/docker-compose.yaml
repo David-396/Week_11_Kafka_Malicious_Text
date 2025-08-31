@@ -1,0 +1,102 @@
+# docker-compose.yml
+services:
+  # Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network
+
+  # Kafka Broker
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    depends_on:
+      - zookeeper
+    networks:
+      - app-network
+
+  # MongoDB
+  mongo:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - app-network
+
+  # retriever
+  retriever:
+    build: ./retriever
+    container_name: mdb-retriever
+    ports:
+      - "8015:8015"
+    environment:
+      MDB_USER: IRGC_NEW
+      MDB_PASSWORD: iran135
+      MDB_HOST: cluster0.6ycjkak.mongodb.net
+      KAFKA_BROKER_URL: kafka:9092
+      COLLECTION_NAME: tweets
+      DB_NAME: IranMalDB
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # preprocessor
+  preprocessor:
+    build: ./preprocessor
+    container_name: preprocessor-container
+    ports:
+      - "8016:8000"
+    environment:
+      KAFKA_HOST_NAME: kafka
+      KAFKA_PORT: 9092
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  enricher:
+    build: ./enricher
+    container_name: enricher-container
+    ports:
+      - "8017:8000"
+    environment:
+      KAFKA_HOST_NAME: kafka
+      KAFKA_PORT: 9092
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+    restart: unless-stopped
+
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+
